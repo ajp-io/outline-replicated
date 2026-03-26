@@ -1,0 +1,27 @@
+apiVersion: kots.io/v1beta2
+kind: HelmChart
+metadata:
+  name: ingress-nginx
+spec:
+  chart:
+    name: ingress-nginx
+    chartVersion: "4.11.3"
+  releaseName: ingress-nginx
+  namespace: ingress-nginx
+  weight: 0
+  exclude: 'repl{{ ne Distribution "embedded-cluster" }}'
+  useHelmInstall: true
+  helmUpgradeFlags:
+    - --wait
+    - --wait-for-jobs
+    - --create-namespace
+  values:
+    controller:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      kind: DaemonSet
+      service:
+        type: ClusterIP
+      admissionWebhooks:
+        enabled: false
+  builder: {}

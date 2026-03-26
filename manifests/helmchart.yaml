@@ -1,0 +1,88 @@
+apiVersion: kots.io/v1beta2
+kind: HelmChart
+metadata:
+  name: outline
+spec:
+  chart:
+    name: outline
+    chartVersion: "0.7.3"
+  releaseName: outline
+  weight: 1
+  useHelmInstall: true
+  helmUpgradeFlags:
+    - --wait
+    - --wait-for-jobs
+  values:
+    url: '{{repl ConfigOption "app_url"}}'
+
+    postgresql:
+      enabled: true
+      auth:
+        password: '{{repl ConfigOption "db_password"}}'
+
+    redis:
+      enabled: true
+      auth:
+        password: '{{repl ConfigOption "redis_password"}}'
+
+    minio:
+      enabled: true
+      auth:
+        rootPassword: '{{repl ConfigOption "minio_password"}}'
+
+    auth:
+      slack:
+        enabled: repl{{ ConfigOptionEquals "auth_slack_enabled" "1" }}
+        clientId: '{{repl ConfigOption "slack_client_id"}}'
+        clientSecret: '{{repl ConfigOption "slack_client_secret"}}'
+      github:
+        enabled: repl{{ ConfigOptionEquals "github_enabled" "1" }}
+        appName: '{{repl ConfigOption "github_app_name"}}'
+        appId: '{{repl ConfigOption "github_app_id"}}'
+        clientId: '{{repl ConfigOption "github_client_id"}}'
+        clientSecret: '{{repl ConfigOption "github_client_secret"}}'
+        appPrivateKey: '{{repl ConfigOption "github_app_private_key" | Base64Encode}}'
+      gitlab:
+        enabled: repl{{ ConfigOptionEquals "auth_gitlab_enabled" "1" }}
+        clientId: '{{repl ConfigOption "gitlab_client_id"}}'
+        clientSecret: '{{repl ConfigOption "gitlab_client_secret"}}'
+        baseUrl: '{{repl ConfigOption "gitlab_base_url"}}'
+
+    smtp:
+      host: '{{repl ConfigOption "smtp_host"}}'
+      port: repl{{ ConfigOption "smtp_port" | ParseInt }}
+      username: '{{repl ConfigOption "smtp_username"}}'
+      password: '{{repl ConfigOption "smtp_password"}}'
+      fromEmail: '{{repl ConfigOption "smtp_username"}}'
+      replyEmail: '{{repl ConfigOption "smtp_username"}}'
+      secure: false
+
+    certManager:
+      createClusterIssuer: 'repl{{ eq Distribution "embedded-cluster" }}'
+
+    web:
+      forceHttps: true
+
+    ingress:
+      enabled: true
+      className: "nginx"
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-prod"
+        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      hosts:
+        - host: '{{repl ConfigOption "app_url" | trimPrefix "https://" | trimPrefix "http://"}}'
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls:
+        - secretName: outline-tls
+          hosts:
+            - '{{repl ConfigOption "app_url" | trimPrefix "https://" | trimPrefix "http://"}}'
+
+  builder:
+    postgresql:
+      enabled: true
+    redis:
+      enabled: true
+    minio:
+      enabled: true

@@ -1,0 +1,21 @@
+apiVersion: kots.io/v1beta2
+kind: HelmChart
+metadata:
+  name: cert-manager
+spec:
+  chart:
+    name: cert-manager
+    chartVersion: "v1.17.2"
+  releaseName: cert-manager
+  namespace: cert-manager
+  weight: 0
+  exclude: 'repl{{ ne Distribution "embedded-cluster" }}'
+  useHelmInstall: true
+  helmUpgradeFlags:
+    - --wait
+    - --wait-for-jobs
+    - --create-namespace
+  values:
+    crds:
+      enabled: true
+  builder: {}

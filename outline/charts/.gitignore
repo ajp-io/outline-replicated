@@ -1,0 +1,2 @@
+# Unpacked chart directories are not needed — helm dependency update downloads tarballs
+*/

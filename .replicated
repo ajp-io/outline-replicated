@@ -1,0 +1,7 @@
+appSlug: outline-enterprise
+charts:
+  - path: ./dist/outline
+  - path: ./dist/cert-manager
+  - path: ./dist/ingress-nginx
+manifests:
+  - ./manifests/*.yaml

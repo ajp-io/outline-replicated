@@ -1,0 +1,156 @@
+apiVersion: kots.io/v1beta1
+kind: Config
+metadata:
+  name: outline-enterprise
+spec:
+  groups:
+    - name: app_settings
+      title: App Settings
+      items:
+        - name: app_url
+          title: Application URL
+          help_text: The base URL where Outline will be accessible (e.g. https://outline.example.com)
+          type: text
+          required: true
+        - name: letsencrypt_email
+          title: Let's Encrypt Email
+          help_text: Email address used to register with Let's Encrypt for TLS certificate issuance and expiry notifications.
+          type: text
+          required: true
+
+    - name: database
+      title: Database
+      items:
+        - name: db_password
+          title: PostgreSQL Password
+          type: password
+          value: 'repl{{ RandomString 16 }}'
+
+    - name: redis
+      title: Redis
+      items:
+        - name: redis_password
+          title: Redis Password
+          type: password
+          value: 'repl{{ RandomString 16 }}'
+
+    - name: storage
+      title: Storage
+      items:
+        - name: minio_password
+          title: MinIO Root Password
+          type: password
+          value: 'repl{{ RandomString 16 }}'
+
+    - name: authentication
+      title: Authentication
+      description: Choose which login methods are available to users. Magic Link is required for first-time setup — Outline will email the initial admin invite on first access.
+      items:
+        - name: auth_magic_link_enabled
+          title: Magic Link (Email)
+          help_text: Users receive a one-time login link by email. Required for initial admin setup.
+          type: bool
+          default: "1"
+        - name: auth_slack_enabled
+          title: Slack
+          help_text: Allow users to sign in with their Slack account.
+          type: bool
+          default: "0"
+        - name: slack_client_id
+          title: Slack Client ID
+          help_text: Found in your Slack app's Basic Information page.
+          type: text
+          required: true
+          when: '{{repl ConfigOptionEquals "auth_slack_enabled" "1"}}'
+        - name: slack_client_secret
+          title: Slack Client Secret
+          help_text: Found in your Slack app's Basic Information page.
+          type: password
+          required: true
+          when: '{{repl ConfigOptionEquals "auth_slack_enabled" "1"}}'
+        - name: auth_gitlab_enabled
+          title: GitLab
+          help_text: Allow users to sign in with their GitLab account.
+          type: bool
+          default: "0"
+        - name: gitlab_client_id
+          title: GitLab Application ID
+          help_text: Found in your GitLab application settings under User Settings > Applications.
+          type: text
+          required: true
+          when: '{{repl ConfigOptionEquals "auth_gitlab_enabled" "1"}}'
+        - name: gitlab_client_secret
+          title: GitLab Secret
+          type: password
+          required: true
+          when: '{{repl ConfigOptionEquals "auth_gitlab_enabled" "1"}}'
+        - name: gitlab_base_url
+          title: GitLab Base URL
+          help_text: Base URL of your GitLab instance. Leave as default for gitlab.com.
+          type: text
+          default: "https://gitlab.com"
+          required: true
+          when: '{{repl ConfigOptionEquals "auth_gitlab_enabled" "1"}}'
+        - name: smtp_host
+          title: SMTP Host
+          type: text
+          default: smtp.gmail.com
+          required: true
+          when: '{{repl ConfigOptionEquals "auth_magic_link_enabled" "1"}}'
+        - name: smtp_port
+          title: SMTP Port
+          type: text
+          default: "587"
+          required: true
+          when: '{{repl ConfigOptionEquals "auth_magic_link_enabled" "1"}}'
+        - name: smtp_username
+          title: SMTP Username
+          help_text: Your email address (also used as the from/reply-to address)
+          type: text
+          required: true
+          when: '{{repl ConfigOptionEquals "auth_magic_link_enabled" "1"}}'
+        - name: smtp_password
+          title: SMTP Password
+          help_text: For Gmail, use an App Password from myaccount.google.com/apppasswords
+          type: password
+          required: true
+          when: '{{repl ConfigOptionEquals "auth_magic_link_enabled" "1"}}'
+
+
+    - name: integrations
+      title: Integrations
+      items:
+        - name: github_enabled
+          title: GitHub
+          help_text: Connect a GitHub App to enable live link previews for issues and pull requests in documents.
+          type: bool
+          default: "0"
+        - name: github_app_name
+          title: GitHub App Name (slug)
+          help_text: The URL slug of your GitHub App, e.g. "outline-test" from github.com/settings/apps/outline-test
+          type: text
+          required: true
+          when: '{{repl ConfigOptionEquals "github_enabled" "1"}}'
+        - name: github_app_id
+          title: GitHub App ID
+          help_text: The numeric App ID shown in your GitHub App settings
+          type: text
+          required: true
+          when: '{{repl ConfigOptionEquals "github_enabled" "1"}}'
+        - name: github_client_id
+          title: GitHub Client ID
+          help_text: Create a GitHub App at https://github.com/settings/apps — set the callback URL to {app_url}/auth/github.callback
+          type: text
+          required: true
+          when: '{{repl ConfigOptionEquals "github_enabled" "1"}}'
+        - name: github_client_secret
+          title: GitHub Client Secret
+          type: password
+          required: true
+          when: '{{repl ConfigOptionEquals "github_enabled" "1"}}'
+        - name: github_app_private_key
+          title: GitHub App Private Key
+          help_text: The contents of the .pem file downloaded from your GitHub App settings
+          type: textarea
+          required: true
+          when: '{{repl ConfigOptionEquals "github_enabled" "1"}}'
