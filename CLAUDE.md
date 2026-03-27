@@ -28,6 +28,13 @@ the next package.
 
 If subchart dependencies have changed, run `helm dependency update ./outline` first.
 
+**Local subcharts** (like `iframely`) use `repository: ""` in `Chart.yaml`. Helm 4 requires
+`file://../iframely` to run `helm dependency update`, but the Replicated CLI fails if that
+path is committed (it can't resolve it from `dist/`). Workflow when adding a new local subchart:
+1. Temporarily set `repository: "file://../<name>"` in `Chart.yaml`
+2. Run `helm dependency update ./outline` (downloads the tgz into `outline/charts/`)
+3. Revert back to `repository: ""` before committing and creating a release
+
 ```bash
 VERSION=0.2.3   # increment for each release
 
@@ -98,6 +105,8 @@ This extracts the `outline-enterprise` binary and `license.yaml` into the home d
 ### 3. Copy config values to the VM
 ```bash
 g-scp outline-test configvalues.yaml
+# Or for external PostgreSQL testing:
+g-scp outline-test configvalues-external-db.yaml configvalues.yaml
 ```
 
 ### 4. Run the install
@@ -127,9 +136,43 @@ g-ssh outline-test "sudo ./outline-enterprise reset"
 g-ssh outline-test "sudo ./outline-enterprise install --license license.yaml --config-values configvalues.yaml --admin-console-password admin1234"
 ```
 
+## External PostgreSQL test database
+
+To test the external DB path, provision a GCP VM with PostgreSQL:
+
+```bash
+g-create outline-postgres
+
+# Install PostgreSQL + add PGDG repo for current packages
+g-ssh outline-postgres "sudo apt-get update -qq && sudo apt-get install -y postgresql postgresql-contrib"
+
+# Create user and database
+g-ssh outline-postgres "sudo -u postgres psql -c \"CREATE USER outline WITH PASSWORD 'outlinepass';\""
+g-ssh outline-postgres "sudo -u postgres psql -c \"CREATE DATABASE outline OWNER outline;\""
+
+# Allow external connections
+g-ssh outline-postgres "sudo sed -i \"s/#listen_addresses = 'localhost'/listen_addresses = '*'/\" /etc/postgresql/*/main/postgresql.conf"
+g-ssh outline-postgres "echo 'host outline outline 0.0.0.0/0 md5' | sudo tee -a /etc/postgresql/*/main/pg_hba.conf"
+g-ssh outline-postgres "sudo systemctl restart postgresql"
+```
+
+The GCP firewall rule `allow-postgres-internal` (tcp:5432 from 10.128.0.0/9) must exist:
+```bash
+gcloud compute firewall-rules create allow-postgres-internal \
+  --network=default --allow=tcp:5432 --source-ranges=10.128.0.0/9 || true
+```
+
+Note the VM's internal IP (`g-list`) and update it in `helmvalues-external-db.yaml` and
+`configvalues-external-db.yaml` if it differs from `10.128.0.87`.
+
+Use `configvalues-external-db.yaml` / `helmvalues-external-db.yaml` instead of the default
+files when testing the external DB path. Clean up with `g-del outline-postgres` when done.
+
 ## Testing a release (Helm install)
 
 `helmvalues.yaml` contains test values with all auth methods enabled, mirroring `configvalues.yaml`.
+Use `helmvalues-external-db.yaml` to test the external PostgreSQL path (requires the
+`outline-postgres` VM to be running — see "External PostgreSQL test database" above).
 
 ### 1. Create a GKE cluster
 ```bash
@@ -186,8 +229,16 @@ spec:
 EOF
 ```
 
-### 4. Login to Replicated registry and install
+### 4. Create a release, login to Replicated registry, and install
+
+**Always install from the Replicated registry** (not from `./outline` directly) so the
+Replicated SDK gets a real license context. Direct installs from `./outline` cause the
+SDK pod to crash with "license not specified".
+
 ```bash
+# First create a release (see "Creating a release" above)
+VERSION=x.y.z  # use the next version
+
 helm registry login registry.replicated.com \
   --username alexp@replicated.com \
   --password 3AUjxvP6RUeUACIFOek9aXJjOQC
@@ -198,6 +249,8 @@ helm install outline \
   --create-namespace \
   --values helmvalues.yaml
 ```
+
+For subsequent changes, use `helm upgrade` with the same flags.
 
 ### 5. Clean up
 ```bash

@@ -14,11 +14,19 @@ spec:
     - --wait-for-jobs
   values:
     url: '{{repl ConfigOption "app_url"}}'
+    defaultLanguage: '{{repl ConfigOption "default_language"}}'
 
     postgresql:
-      enabled: true
+      enabled: repl{{ ConfigOptionEquals "db_external_enabled" "0" }}
       auth:
         password: '{{repl ConfigOption "db_password"}}'
+
+    externalPostgresql:
+      host: '{{repl ConfigOption "db_host"}}'
+      port: repl{{ ConfigOption "db_port" | ParseInt }}
+      database: '{{repl ConfigOption "db_name"}}'
+      username: '{{repl ConfigOption "db_user"}}'
+      password: '{{repl ConfigOption "db_external_password"}}'
 
     redis:
       enabled: true
@@ -29,6 +37,23 @@ spec:
       enabled: true
       auth:
         rootPassword: '{{repl ConfigOption "minio_password"}}'
+
+    integrations:
+      slack:
+        enabled: repl{{ ConfigOptionEquals "slack_integration_enabled" "1" }}
+        verificationToken: '{{repl ConfigOption "slack_verification_token"}}'
+        appId: '{{repl ConfigOption "slack_app_id"}}'
+        messageActions: repl{{ ConfigOptionEquals "slack_message_actions" "1" }}
+      iframely:
+        enabled: repl{{ ConfigOptionEquals "iframely_enabled" "1" }}
+        url: "http://outline-iframely:8061"
+      linear:
+        enabled: repl{{ ConfigOptionEquals "linear_enabled" "1" }}
+        clientId: '{{repl ConfigOption "linear_client_id"}}'
+        clientSecret: '{{repl ConfigOption "linear_client_secret"}}'
+      sentry:
+        enabled: repl{{ ConfigOptionEquals "sentry_enabled" "1" }}
+        dsn: '{{repl ConfigOption "sentry_dsn"}}'
 
     auth:
       slack:
@@ -42,11 +67,21 @@ spec:
         clientId: '{{repl ConfigOption "github_client_id"}}'
         clientSecret: '{{repl ConfigOption "github_client_secret"}}'
         appPrivateKey: '{{repl ConfigOption "github_app_private_key" | Base64Encode}}'
+      auth0:
+        enabled: repl{{ ConfigOptionEquals "oidc_provider" "auth0" }}
+        baseUrl: 'https://{{repl ConfigOption "auth0_domain"}}'
+        clientId: '{{repl ConfigOption "auth0_client_id"}}'
+        clientSecret: '{{repl ConfigOption "auth0_client_secret"}}'
       gitlab:
-        enabled: repl{{ ConfigOptionEquals "auth_gitlab_enabled" "1" }}
+        enabled: repl{{ ConfigOptionEquals "oidc_provider" "gitlab" }}
         clientId: '{{repl ConfigOption "gitlab_client_id"}}'
         clientSecret: '{{repl ConfigOption "gitlab_client_secret"}}'
         baseUrl: '{{repl ConfigOption "gitlab_base_url"}}'
+      gitea:
+        enabled: repl{{ ConfigOptionEquals "oidc_provider" "gitea" }}
+        clientId: '{{repl ConfigOption "gitea_client_id"}}'
+        clientSecret: '{{repl ConfigOption "gitea_client_secret"}}'
+        baseUrl: '{{repl ConfigOption "gitea_base_url"}}'
 
     smtp:
       host: '{{repl ConfigOption "smtp_host"}}'
@@ -79,7 +114,16 @@ spec:
           hosts:
             - '{{repl ConfigOption "app_url" | trimPrefix "https://" | trimPrefix "http://"}}'
 
+  optionalValues:
+    - when: '{{repl ConfigOptionEquals "iframely_enabled" "1"}}'
+      recursiveMerge: false
+      values:
+        extraEnvVars:
+          ALLOWED_PRIVATE_IP_ADDRESSES: "0.0.0.0/0"
+
   builder:
+    iframely:
+      enabled: true
     postgresql:
       enabled: true
     redis:

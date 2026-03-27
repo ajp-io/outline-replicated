@@ -1,0 +1,10 @@
+image:
+  repository: proxy.replicated.com/proxy/outline-enterprise/docker.io/jolt/iframely
+  tag: latest
+  pullPolicy: IfNotPresent
+
+imagePullSecrets:
+  - name: enterprise-pull-secret
+
+service:
+  port: 8061

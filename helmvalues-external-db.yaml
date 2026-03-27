@@ -1,0 +1,96 @@
+# Test values for helm install testing with external PostgreSQL.
+# Use instead of helmvalues.yaml when testing the external DB path.
+#
+# Prerequisites: outline-postgres GCP VM running at 10.128.0.87 (g-create outline-postgres)
+#
+# Usage:
+#   helm install outline oci://registry.replicated.com/outline-enterprise/unstable/outline \
+#     --namespace outline --create-namespace \
+#     --values helmvalues-external-db.yaml
+
+global:
+  security:
+    allowInsecureImages: true
+
+url: "https://outline-2.alexparker.info"
+
+web:
+  forceHttps: true
+
+postgresql:
+  enabled: false
+
+externalPostgresql:
+  host: "10.128.0.87"
+  database: "outline"
+  username: "outline"
+  password: "outlinepass"
+
+redis:
+  enabled: true
+  auth:
+    password: "testpassword1234"
+
+minio:
+  enabled: true
+  auth:
+    rootPassword: "testpassword1234"
+
+auth:
+  slack:
+    enabled: true
+    clientId: "10765990787589.10753969583287"
+    clientSecret: "2da76e9f0f30ea38906f2666c7d3b19c"
+
+  gitlab:
+    enabled: true
+    clientId: "9bae36a0d7987124f20f07865de2264aee71622918fd601bda5ae77193aff951"
+    clientSecret: "gloas-1aabe7032ff0eac789fac83601f0f79f0f04a500760fde172bed2be0c36b3db0"
+    baseUrl: "https://gitlab.com"
+
+  github:
+    enabled: true
+    appName: "alex-outline"
+    appId: "3016844"
+    clientId: "Iv23liHjN8NBKB2Rn1Zj"
+    clientSecret: "fac935cd141c978be9741b5997d3e93c690b479a"
+    appPrivateKey: "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBd1ptcUwzQjVyT3RQSzNoa1BSdHVIa1EvMTkxOG1LRHBEd2JpRUEyVjFoV1h0T3lnCjV6T0NJN0szTVFIeFJxYXFQcDhyVGpQQzlibDA2UlNKd0Z5ODA5OWhlNkl6K3ZzUi9HZ0g2Z3A1dWVoOWMxeFEKZDF1Z1F6UUJsWnhXang4WmRmL2dmaXoyMktLak1CSWxKT0ZGcjl3akxPTnJRWG5NUldTcDZVeW1QdlBYMjdPNQpJM05jdWc4QXRzaVBSOTVZODRBTis3c0d3d3Nqdzk1MmRmUjkwZndRTk1mV2l2TGxhdUNkMk1yWUtVRDZnNXlaClU1bXpIYnd0ZVJiWUE2YVhEeDI4TVJCUjFnNFBSYngvaUIxS2p1L2NXcS91NVk0Rm1FM3QrLzFDVlJna294NTQKQ0VMMmhzcFl5Mmhxd0M2enZNV1pUaU5jMlVoaEVsM3R6bE1ERndJREFRQUJBb0lCQUh5Ukd1ZWJQeTc3Mk56bgpnZGV2cHBMaTV4RkYrYjFiQzVvWG02MG9rSmhISEczVk0xS1AyZFNPVVVDL056ZDJWV1FsbGYralhuWXM5Z1JpCnFwK1REQXhuVnBudUsvUDVTQUZZRG4rUWJmSW9uVTkwdm5HT0N2Z3lwakpWZlh4cFRrQ1dleU8wV3IvWkpaYncKbGVXODdOSFNtdTl2Qkx3RVdtTHIra2VhZ2YxT1Y1Mm1lTTlUYU1sTWJEUnkwTlRkN0c4SWJKODRWTmRDVmxraAp5TTF4TDhBNlUwTG5pa3VGK2Q5T0l1RUNCbHBjTWZnSjd3T3J6M1NoTDdtRGM1dzQvc3lPNHdpQWdXWDZxTXNiCjRrTHpjRm9aZkgrb3dSWmVreFhwQk9TUXJTU0pDNEFySlBJNysxTUl1WUFXSDduSmNqdm1Nd0l3Z1psS0E5YlUKL0RVSlVNRUNnWUVBKzRiY0xzL1MxQXZxeFZsUWpNcUVHQlFCamdBWUNONjBQMkZNdjYxbDgvN2dxK01Hd2dYaAp6c2FIVzRCa1VlWnBlMFhVYXBpdzlVMDh2QjBkL2lBczZEZWJQbVBpRk5ZTUVRWElNcGlQSkZSR3NrQWhuVU1nCkdBeDFCbXlnMGx6Q1V1cVFPSzNGbzVoUEs5cTUyK0Z4Tm1yekJiT3NTOUVlVWxuWjNlNHJJZ1VDZ1lFQXhRc1UKVHN2T2JmenZaOHlZOUlFTkhyK2FzZzd2d0thUS9sa0FKU0kveDFuckM3K3h2L0hudVlGNklFMzZMSWV4K2Y2ZQp6d1NSc0hTbkRDMHVvZ21yaXlqVGRNV0l0VSt1d1hUcHh2NUpCSDFWUDRQZUE0c0ZtSWFUdWluM2RIU0ludWxzClJJUitzdHZPZlhYYlNqNmJCOW5Dd0FwWDlkSzN5NWhiN1R3UGoyc0NnWUVBMlc4MXZFbndDVnJiOHdwSXRjMEQKOEFTcmEyUHRZdzJTYUEvbTF2UkE1SEo3S2x3eHBWeU1YY0lGbFRZaWd5SmFJVFMyY2dmWlFkVXBJYjFTQmpNdQpYdmhpL2NZKzFLQk5BaElyaElHWmpHQkdWU1ZYYWFsemZ4YVZ1NTRBVUpuYmF1NVhDb2crQ0RSTWpLNmlhTkEwCm5FUk1IYXU2MERmUXJJUDc4UHhJMFRrQ2dZQjEzaG5JeE10NEtieUFCL2hiRWpOcCtFMnVRNWNSVTlJYUE5MDkKV1U1empvczJuUFhVRHYyQmp6MGh3K05wN2NYOStGekJFMGVmR1RpdjVQc25QTWViMTlFZDRlZlVKWlV3N2lIRgp3bWlsUWQvVHZhcjV6WmlNVTd4Y3VTdm9RcWxTL2VpZzEreitTdFFyWW12SjdzZElHL0FPZG1HRmtBWVh5TXo4CmpWZjFmd0tCZ0R6YVFZT0lTaEliZ2FBeDlNcWhldjNhSkhwam15T0hYbVZkbVlGVFd3aENyNTB5YWRuM1hJRXkKNkhsR2ZsWG1vZGpMdEUxd2owUTJVZFc1RGx6V3dFbDhiS25MTmdGcVFRREs4UUlZdGhNT3BSTlJ4cGhnNmNETApnZzJHMDh0TW8ycjk1V0tDMlhyVWRBQVRpODBMd0VGSkZqKzJFbWRnOGN1TzlDQUdQYTUrCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0t"
+
+integrations:
+  slack:
+    enabled: true
+    verificationToken: "iUcnwMczrMNmewDpk57Ycqej"
+    appId: "A0AN5UHH58F"
+    messageActions: true
+  linear:
+    enabled: true
+    clientId: "c9127eb663f2f526e1db22836e859d38"
+    clientSecret: "db20ea5f988ae7c6026858eb0ec6770e"
+
+smtp:
+  host: "smtp.gmail.com"
+  port: 587
+  username: "alex.parker215@gmail.com"
+  password: "dptmgpvhznxwxevu"
+  fromEmail: "alex.parker215@gmail.com"
+  replyEmail: "alex.parker215@gmail.com"
+  secure: false
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  hosts:
+    - host: "outline-2.alexparker.info"
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: outline-tls
+      hosts:
+        - "outline-2.alexparker.info"
+
+certManager:
+  createClusterIssuer: false

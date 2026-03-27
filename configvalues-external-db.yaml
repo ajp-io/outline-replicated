@@ -1,0 +1,91 @@
+apiVersion: kots.io/v1beta1
+kind: ConfigValues
+metadata:
+  name: outline-enterprise
+spec:
+  values:
+    app_url:
+      value: "https://outline-1.alexparker.info"
+    letsencrypt_email:
+      value: "alex.parker215@gmail.com"
+    smtp_username:
+      value: "alex.parker215@gmail.com"
+    smtp_password:
+      valuePlaintext: "dptmgpvhznxwxevu"
+    slack_integration_enabled:
+      value: "1"
+    slack_verification_token:
+      valuePlaintext: "iUcnwMczrMNmewDpk57Ycqej"
+    slack_app_id:
+      value: "A0AN5UHH58F"
+    slack_message_actions:
+      value: "1"
+    auth_slack_enabled:
+      value: "1"
+    slack_client_id:
+      value: "10765990787589.10753969583287"
+    slack_client_secret:
+      valuePlaintext: "2da76e9f0f30ea38906f2666c7d3b19c"
+    auth_gitlab_enabled:
+      value: "1"
+    gitlab_client_id:
+      value: "9bae36a0d7987124f20f07865de2264aee71622918fd601bda5ae77193aff951"
+    gitlab_client_secret:
+      valuePlaintext: "gloas-1aabe7032ff0eac789fac83601f0f79f0f04a500760fde172bed2be0c36b3db0"
+    github_enabled:
+      value: "1"
+    github_client_id:
+      value: "Ov23lixX52YCFP7FYDBb"
+    github_client_secret:
+      valuePlaintext: "0ff13582daad55ee948de1e7525a78f69290955f"
+    github_app_name:
+      value: "alex-outline"
+    github_app_id:
+      value: "3016844"
+    github_app_private_key:
+      value: |
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEowIBAAKCAQEAwZmqL3B5rOtPK3hkPRtuHkQ/1918mKDpDwbiEA2V1hWXtOyg
+        5zOCI7K3MQHxRqaqPp8rTjPC9bl06RSJwFy8099he6Iz+vsR/GgH6gp5ueh9c1xQ
+        d1ugQzQBlZxWjx8Zdf/gfiz22KKjMBIlJOFFr9wjLONrQXnMRWSp6UymPvPX27O5
+        I3Ncug8AtsiPR95Y84AN+7sGwwsjw952dfR90fwQNMfWivLlauCd2MrYKUD6g5yZ
+        U5mzHbwteRbYA6aXDx28MRBR1g4PRbx/iB1Kju/cWq/u5Y4FmE3t+/1CVRgkox54
+        CEL2hspYy2hqwC6zvMWZTiNc2UhhEl3tzlMDFwIDAQABAoIBAHyRGuebPy772Nzn
+        gdevppLi5xFF+b1bC5oXm60okJhHHG3VM1KP2dSOUUC/Nzd2VWQllf+jXnYs9gRi
+        qp+TDAxnVpnuK/P5SAFYDn+QbfIonU90vnGOCvgypjJVfXxpTkCWeyO0Wr/ZJZbw
+        leW87NHSmu9vBLwEWmLr+keagf1OV52meM9TaMlMbDRy0NTd7G8IbJ84VNdCVlkh
+        yM1xL8A6U0LnikuF+d9OIuECBlpcMfgJ7wOrz3ShL7mDc5w4/syO4wiAgWX6qMsb
+        4kLzcFoZfH+owRZekxXpBOSQrSSJC4ArJPI7+1MIuYAWH7nJcjvmMwIwgZlKA9bU
+        /DUJUMECgYEA+4bcLs/S1AvqxVlQjMqEGBQBjgAYCN60P2FMv61l8/7gq+MGwgXh
+        zsaHW4BkUeZpe0XUapiw9U08vB0d/iAs6DebPmPiFNYMEQXIMpiPJFRGskAhnUMg
+        GAx1Bmyg0lzCUuqQOK3Fo5hPK9q52+FxNmrzBbOsS9EeUlnZ3e4rIgUCgYEAxQsU
+        TsvObfzvZ8yY9IENHr+asg7vwKaQ/lkAJSI/x1nrC7+xv/HnuYF6IE36LIex+f6e
+        zwSRsHSnDC0uogmriyjTdMWItU+uwXTpxv5JBH1VP4PeA4sFmIaTuin3dHSInuls
+        RIR+stvOfXXbSj6bB9nCwApX9dK3y5hb7TwPj2sCgYEA2W81vEnwCVrb8wpItc0D
+        8ASra2PtYw2SaA/m1vRA5HJ7KlwxpVyMXcIFlTYigyJaITS2cgfZQdUpIb1SBjMu
+        Xvhi/cY+1KBNAhIrhIGZjGBGVSVXaalzfxaVu54AUJnbau5XCog+CDRMjK6iaNA0
+        nERMHau60DfQrIP78PxI0TkCgYB13hnIxMt4KbyAB/hbEjNp+E2uQ5cRU9IaA909
+        WU5zjos2nPXUDv2Bjz0hw+Np7cX9+FzBE0efGTiv5PsnPMeb19Ed4efUJZUw7iHF
+        wmilQd/Tvar5zZiMU7xcuSvoQqlS/eig1+z+StQrYmvJ7sdIG/AOdmGFkAYXyMz8
+        jVf1fwKBgDzaQYOIShIbgaAx9Mqhev3aJHpjmyOHXmVdmYFTWwhCr50yadn3XIEy
+        6HlGflXmodjLtE1wj0Q2UdW5DlzWwEl8bKnLNgFqQQDK8QIYthMOpRNRxphg6cDL
+        gg2G08tMo2r95WKC2XrUdAATi80LwEFJFj+2Emdg8cuO9CAGPa5+
+        -----END RSA PRIVATE KEY-----
+    linear_enabled:
+      value: "1"
+    linear_client_id:
+      value: "c9127eb663f2f526e1db22836e859d38"
+    linear_client_secret:
+      value: "db20ea5f988ae7c6026858eb0ec6770e"
+    db_external_enabled:
+      value: "1"
+    db_host:
+      value: "10.128.0.87"
+    db_port:
+      value: "5432"
+    db_name:
+      value: "outline"
+    db_user:
+      value: "outline"
+    db_password:
+      valuePlaintext: "outlinepass"

@@ -61,6 +61,10 @@ dependencies:
   name: minio
   repository: https://charts.min.io/
   version: 5.4.0
+- condition: integrations.iframely.enabled
+  name: iframely
+  repository: ""
+  version: "0.1.0"
 - name: replicated
   repository: oci://registry.replicated.com/library
   version: 1.16.0

@@ -17,14 +17,84 @@ spec:
           help_text: Email address used to register with Let's Encrypt for TLS certificate issuance and expiry notifications.
           type: text
           required: true
+        - name: default_language
+          title: Default Language
+          help_text: The default UI language for all users. Individual users can override this in their account settings.
+          type: dropdown
+          default: en_US
+          items:
+            - name: en_US
+              title: English (US)
+            - name: en_GB
+              title: English (UK)
+            - name: de_DE
+              title: German
+            - name: fr_FR
+              title: French
+            - name: es_ES
+              title: Spanish
+            - name: it_IT
+              title: Italian
+            - name: ja_JP
+              title: Japanese
+            - name: ko_KR
+              title: Korean
+            - name: pt_BR
+              title: Portuguese (Brazil)
+            - name: ru_RU
+              title: Russian
+            - name: tr_TR
+              title: Turkish
+            - name: zh_CN
+              title: Chinese (Simplified)
+            - name: zh_TW
+              title: Chinese (Traditional)
 
     - name: database
       title: Database
       items:
+        - name: db_external_enabled
+          title: Use External PostgreSQL
+          help_text: Connect to an external PostgreSQL server instead of the built-in database. Required for AI features (pgvector support).
+          type: bool
+          default: "0"
+        - name: db_host
+          title: PostgreSQL Host
+          help_text: Hostname or IP address of your external PostgreSQL server.
+          type: text
+          required: true
+          when: '{{repl ConfigOptionEquals "db_external_enabled" "1"}}'
+        - name: db_port
+          title: PostgreSQL Port
+          type: text
+          default: "5432"
+          required: true
+          when: '{{repl ConfigOptionEquals "db_external_enabled" "1"}}'
+        - name: db_name
+          title: PostgreSQL Database
+          type: text
+          default: "outline"
+          required: true
+          when: '{{repl ConfigOptionEquals "db_external_enabled" "1"}}'
+        - name: db_user
+          title: PostgreSQL Username
+          type: text
+          default: "postgres"
+          required: true
+          when: '{{repl ConfigOptionEquals "db_external_enabled" "1"}}'
+        - name: db_external_password
+          title: PostgreSQL Password
+          help_text: Password for your external PostgreSQL server.
+          type: password
+          required: true
+          when: '{{repl ConfigOptionEquals "db_external_enabled" "1"}}'
         - name: db_password
           title: PostgreSQL Password
+          help_text: Password for the built-in PostgreSQL database.
           type: password
+          required: true
           value: 'repl{{ RandomString 16 }}'
+          when: '{{repl ConfigOptionEquals "db_external_enabled" "0"}}'
 
     - name: redis
       title: Redis
@@ -32,6 +102,7 @@ spec:
         - name: redis_password
           title: Redis Password
           type: password
+          required: true
           value: 'repl{{ RandomString 16 }}'
 
     - name: storage
@@ -40,57 +111,21 @@ spec:
         - name: minio_password
           title: MinIO Root Password
           type: password
+          required: true
           value: 'repl{{ RandomString 16 }}'
 
     - name: authentication
       title: Authentication
       description: Choose which login methods are available to users. Magic Link is required for first-time setup — Outline will email the initial admin invite on first access.
       items:
-        - name: auth_magic_link_enabled
+        - name: heading_magic_link
           title: Magic Link (Email)
+          type: heading
+        - name: auth_magic_link_enabled
+          title: Enable Magic Link Authentication
           help_text: Users receive a one-time login link by email. Required for initial admin setup.
           type: bool
           default: "1"
-        - name: auth_slack_enabled
-          title: Slack
-          help_text: Allow users to sign in with their Slack account.
-          type: bool
-          default: "0"
-        - name: slack_client_id
-          title: Slack Client ID
-          help_text: Found in your Slack app's Basic Information page.
-          type: text
-          required: true
-          when: '{{repl ConfigOptionEquals "auth_slack_enabled" "1"}}'
-        - name: slack_client_secret
-          title: Slack Client Secret
-          help_text: Found in your Slack app's Basic Information page.
-          type: password
-          required: true
-          when: '{{repl ConfigOptionEquals "auth_slack_enabled" "1"}}'
-        - name: auth_gitlab_enabled
-          title: GitLab
-          help_text: Allow users to sign in with their GitLab account.
-          type: bool
-          default: "0"
-        - name: gitlab_client_id
-          title: GitLab Application ID
-          help_text: Found in your GitLab application settings under User Settings > Applications.
-          type: text
-          required: true
-          when: '{{repl ConfigOptionEquals "auth_gitlab_enabled" "1"}}'
-        - name: gitlab_client_secret
-          title: GitLab Secret
-          type: password
-          required: true
-          when: '{{repl ConfigOptionEquals "auth_gitlab_enabled" "1"}}'
-        - name: gitlab_base_url
-          title: GitLab Base URL
-          help_text: Base URL of your GitLab instance. Leave as default for gitlab.com.
-          type: text
-          default: "https://gitlab.com"
-          required: true
-          when: '{{repl ConfigOptionEquals "auth_gitlab_enabled" "1"}}'
         - name: smtp_host
           title: SMTP Host
           type: text
@@ -115,19 +150,138 @@ spec:
           type: password
           required: true
           when: '{{repl ConfigOptionEquals "auth_magic_link_enabled" "1"}}'
-
+        - name: heading_auth_slack
+          title: Slack
+          type: heading
+        - name: auth_slack_enabled
+          title: Enable Slack Authentication
+          help_text: Allow users to sign in with their Slack account.
+          type: bool
+          default: "0"
+        - name: slack_client_id
+          title: Slack Client ID
+          help_text: Found in your Slack app's Basic Information page.
+          type: text
+          required: true
+          when: '{{repl ConfigOptionEquals "auth_slack_enabled" "1"}}'
+        - name: slack_client_secret
+          title: Slack Client Secret
+          help_text: Found in your Slack app's Basic Information page.
+          type: password
+          required: true
+          when: '{{repl ConfigOptionEquals "auth_slack_enabled" "1"}}'
+        - name: oidc_heading
+          title: OIDC Provider
+          type: heading
+          when: '{{repl LicenseFieldValue "oidc_enabled"}}'
+        - name: oidc_provider
+          title: OIDC Provider
+          help_text: Only one OIDC-based provider can be active at a time. Choose the one that matches your identity provider.
+          type: select_one
+          default: none
+          when: '{{repl LicenseFieldValue "oidc_enabled"}}'
+          items:
+            - name: none
+              title: None
+            - name: auth0
+              title: Auth0
+            - name: gitlab
+              title: GitLab
+            - name: gitea
+              title: Gitea
+        - name: auth0_domain
+          title: Auth0 Domain
+          help_text: Your Auth0 tenant domain (e.g. dev-abc123.us.auth0.com)
+          type: text
+          required: true
+          when: 'repl{{ and (eq (LicenseFieldValue "oidc_enabled") "true") (ConfigOptionEquals "oidc_provider" "auth0") }}'
+        - name: auth0_client_id
+          title: Auth0 Client ID
+          type: text
+          required: true
+          when: 'repl{{ and (eq (LicenseFieldValue "oidc_enabled") "true") (ConfigOptionEquals "oidc_provider" "auth0") }}'
+        - name: auth0_client_secret
+          title: Auth0 Client Secret
+          type: password
+          required: true
+          when: 'repl{{ and (eq (LicenseFieldValue "oidc_enabled") "true") (ConfigOptionEquals "oidc_provider" "auth0") }}'
+        - name: gitlab_client_id
+          title: GitLab Application ID
+          help_text: Found in your GitLab application settings under User Settings > Applications.
+          type: text
+          required: true
+          when: 'repl{{ and (eq (LicenseFieldValue "oidc_enabled") "true") (ConfigOptionEquals "oidc_provider" "gitlab") }}'
+        - name: gitlab_client_secret
+          title: GitLab Secret
+          type: password
+          required: true
+          when: 'repl{{ and (eq (LicenseFieldValue "oidc_enabled") "true") (ConfigOptionEquals "oidc_provider" "gitlab") }}'
+        - name: gitlab_base_url
+          title: GitLab Base URL
+          help_text: Base URL of your GitLab instance. Leave as default for gitlab.com.
+          type: text
+          default: "https://gitlab.com"
+          required: true
+          when: 'repl{{ and (eq (LicenseFieldValue "oidc_enabled") "true") (ConfigOptionEquals "oidc_provider" "gitlab") }}'
+        - name: gitea_client_id
+          title: Gitea Client ID
+          help_text: Found in your Gitea instance under Settings > Applications > OAuth2 Applications.
+          type: text
+          required: true
+          when: 'repl{{ and (eq (LicenseFieldValue "oidc_enabled") "true") (ConfigOptionEquals "oidc_provider" "gitea") }}'
+        - name: gitea_client_secret
+          title: Gitea Client Secret
+          type: password
+          required: true
+          when: 'repl{{ and (eq (LicenseFieldValue "oidc_enabled") "true") (ConfigOptionEquals "oidc_provider" "gitea") }}'
+        - name: gitea_base_url
+          title: Gitea Base URL
+          help_text: Base URL of your Gitea instance (e.g. https://gitea.example.com)
+          type: text
+          default: "https://gitea.com"
+          required: true
+          when: 'repl{{ and (eq (LicenseFieldValue "oidc_enabled") "true") (ConfigOptionEquals "oidc_provider" "gitea") }}'
 
     - name: integrations
       title: Integrations
       items:
-        - name: github_enabled
+        - name: heading_slack
+          title: Slack
+          type: heading
+        - name: slack_integration_enabled
+          title: Enable Slack Integration
+          help_text: 'Allow users to use /outline in Slack, unfurl Outline links, and save messages to Outline. In your Slack app''s OAuth & Permissions, add these Redirect URLs: {{repl ConfigOption "app_url" | default "https://your-outline-url"}}/auth/slack.post and {{repl ConfigOption "app_url" | default "https://your-outline-url"}}/auth/slack.commands'
+          type: bool
+          default: "0"
+        - name: slack_verification_token
+          title: Slack Verification Token
+          help_text: Found in your Slack app's Basic Information → App Credentials.
+          type: password
+          required: true
+          when: '{{repl ConfigOptionEquals "slack_integration_enabled" "1"}}'
+        - name: slack_app_id
+          title: Slack App ID
+          help_text: Found in your Slack app's Basic Information (starts with "A").
+          type: text
+          required: true
+          when: '{{repl ConfigOptionEquals "slack_integration_enabled" "1"}}'
+        - name: slack_message_actions
+          title: Enable Message Actions
+          help_text: Allow users to save Slack messages to Outline documents.
+          type: bool
+          default: "1"
+          when: '{{repl ConfigOptionEquals "slack_integration_enabled" "1"}}'
+        - name: heading_github
           title: GitHub
+          type: heading
+        - name: github_enabled
+          title: Enable GitHub Integration
           help_text: Connect a GitHub App to enable live link previews for issues and pull requests in documents.
           type: bool
           default: "0"
         - name: github_app_name
           title: GitHub App Name (slug)
-          help_text: The URL slug of your GitHub App, e.g. "outline-test" from github.com/settings/apps/outline-test
+          help_text: The URL slug of your GitHub App from github.com/settings/apps
           type: text
           required: true
           when: '{{repl ConfigOptionEquals "github_enabled" "1"}}'
@@ -139,7 +293,7 @@ spec:
           when: '{{repl ConfigOptionEquals "github_enabled" "1"}}'
         - name: github_client_id
           title: GitHub Client ID
-          help_text: Create a GitHub App at https://github.com/settings/apps — set the callback URL to {app_url}/auth/github.callback
+          help_text: 'Create a GitHub App at https://github.com/settings/apps — set the callback URL to {{repl ConfigOption "app_url" | default "https://your-outline-url"}}/auth/github.callback'
           type: text
           required: true
           when: '{{repl ConfigOptionEquals "github_enabled" "1"}}'
@@ -154,3 +308,44 @@ spec:
           type: textarea
           required: true
           when: '{{repl ConfigOptionEquals "github_enabled" "1"}}'
+        - name: heading_iframely
+          title: Iframely (Rich Embeds)
+          type: heading
+        - name: iframely_enabled
+          title: Enable Iframely Integration
+          help_text: "Enables rich link previews for YouTube, GitHub, Figma, and 1000+ other sites."
+          type: bool
+          default: "0"
+        - name: heading_linear
+          title: Linear
+          type: heading
+        - name: linear_enabled
+          title: Enable Linear Integration
+          help_text: Connect a Linear OAuth app to enable live link previews for issues in documents.
+          type: bool
+          default: "0"
+        - name: linear_client_id
+          title: Linear Client ID
+          help_text: 'Create an OAuth app in Linear → Settings → API → OAuth Applications. Set the redirect URI to {{repl ConfigOption "app_url" | default "https://your-outline-url"}}/api/linear.callback'
+          type: text
+          required: true
+          when: '{{repl ConfigOptionEquals "linear_enabled" "1"}}'
+        - name: linear_client_secret
+          title: Linear Client Secret
+          type: password
+          required: true
+          when: '{{repl ConfigOptionEquals "linear_enabled" "1"}}'
+        - name: heading_sentry
+          title: Sentry
+          type: heading
+        - name: sentry_enabled
+          title: Enable Sentry Integration
+          help_text: Send application errors to Sentry for monitoring.
+          type: bool
+          default: "0"
+        - name: sentry_dsn
+          title: Sentry DSN
+          help_text: Found in your Sentry project under Settings → Client Keys (DSN).
+          type: text
+          required: true
+          when: '{{repl ConfigOptionEquals "sentry_enabled" "1"}}'

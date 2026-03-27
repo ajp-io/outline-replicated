@@ -38,7 +38,11 @@
           "description": "This sets the pull policy for images.",
           "required": [],
           "title": "pullPolicy",
-          "enum": ["Always", "IfNotPresent", "Never"],
+          "enum": [
+            "Always",
+            "IfNotPresent",
+            "Never"
+          ],
           "type": "string"
         },
         "repository": {
@@ -73,7 +77,9 @@
             "type": "string"
           }
         },
-        "required": ["name"]
+        "required": [
+          "name"
+        ]
       },
       "required": [],
       "title": "imagePullSecrets",
@@ -102,10 +108,15 @@
           "required": [],
           "title": "type",
           "type": "string",
-          "enum": ["RollingUpdate", "Recreate"]
+          "enum": [
+            "RollingUpdate",
+            "Recreate"
+          ]
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "title": "strategy",
       "type": "object"
     },
@@ -227,7 +238,11 @@
           "required": [],
           "title": "type",
           "type": "string",
-          "enum": ["ClusterIP", "NodePort", "LoadBalancer"]
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer"
+          ]
         }
       },
       "required": [
@@ -324,7 +339,21 @@
     },
     "defaultLanguage": {
       "default": "en_US",
-      "enum": ["en_US", "en_GB", "de_DE", "fr_FR", "es_ES", "it_IT", "ja_JP", "ko_KR", "pt_BR", "ru_RU", "tr_TR", "zh_CN", "zh_TW"],
+      "enum": [
+        "en_US",
+        "en_GB",
+        "de_DE",
+        "fr_FR",
+        "es_ES",
+        "it_IT",
+        "ja_JP",
+        "ko_KR",
+        "pt_BR",
+        "ru_RU",
+        "tr_TR",
+        "zh_CN",
+        "zh_TW"
+      ],
       "description": "This is for setting up the default language. See translate.getoutline.com for a list of available language codes and their rough percentage translated",
       "required": [],
       "title": "defaultLanguage",
@@ -434,7 +463,17 @@
           "description": "This is for setting up the extra debug. Available modules: lifecycle, http, editor, router, collaboration, misc, store, plugins, policies",
           "items": {
             "type": "string",
-            "enum": ["lifecycle", "http", "editor", "router", "collaboration", "misc", "store", "plugins", "policies"]
+            "enum": [
+              "lifecycle",
+              "http",
+              "editor",
+              "router",
+              "collaboration",
+              "misc",
+              "store",
+              "plugins",
+              "policies"
+            ]
           },
           "default": [],
           "required": [],
@@ -443,7 +482,15 @@
         },
         "level": {
           "default": "info",
-          "enum": ["error", "warn", "info", "http", "verbose", "debug", "silly"],
+          "enum": [
+            "error",
+            "warn",
+            "info",
+            "http",
+            "verbose",
+            "debug",
+            "silly"
+          ],
           "description": "This is for setting up the logging level.",
           "required": [],
           "title": "level",
@@ -515,9 +562,15 @@
                   "description": "This is for setting up the local file storage persistence access modes.",
                   "items": {
                     "type": "string",
-                    "enum": ["ReadWriteOnce", "ReadOnlyMany", "ReadWriteMany"]
+                    "enum": [
+                      "ReadWriteOnce",
+                      "ReadOnlyMany",
+                      "ReadWriteMany"
+                    ]
                   },
-                  "default": ["ReadWriteOnce"],
+                  "default": [
+                    "ReadWriteOnce"
+                  ],
                   "required": [],
                   "title": "accessModes",
                   "type": "array"
@@ -554,7 +607,11 @@
                 },
                 "volumeMode": {
                   "default": "",
-                  "enum": ["", "Filesystem", "Block"],
+                  "enum": [
+                    "",
+                    "Filesystem",
+                    "Block"
+                  ],
                   "description": "This is for setting up the local file storage persistence volume mode.",
                   "required": [],
                   "title": "volumeMode",
@@ -601,7 +658,16 @@
             },
             "acl": {
               "default": "private",
-              "enum": ["private", "public-read", "public-read-write", "aws-exec-read", "authenticated-read", "bucket-owner-read", "bucket-owner-full-control", "log-delivery-write"],
+              "enum": [
+                "private",
+                "public-read",
+                "public-read-write",
+                "aws-exec-read",
+                "authenticated-read",
+                "bucket-owner-read",
+                "bucket-owner-full-control",
+                "log-delivery-write"
+              ],
               "description": "This is for setting up the s3 file storage acl.",
               "required": [],
               "title": "acl",
@@ -1785,7 +1851,10 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["host", "paths"],
+            "required": [
+              "host",
+              "paths"
+            ],
             "properties": {
               "host": {
                 "type": "string"
@@ -1800,7 +1869,11 @@
                     },
                     "pathType": {
                       "type": "string",
-                      "enum": ["Exact", "Prefix", "ImplementationSpecific"]
+                      "enum": [
+                        "Exact",
+                        "Prefix",
+                        "ImplementationSpecific"
+                      ]
                     }
                   },
                   "required": [
@@ -2070,7 +2143,13 @@
       "default": "",
       "description": "For more information checkout: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
       "required": [],
-      "enum": ["", "ClusterFirst", "ClusterFirstWithHostNet", "Default", "None"],
+      "enum": [
+        "",
+        "ClusterFirst",
+        "ClusterFirstWithHostNet",
+        "Default",
+        "None"
+      ],
       "title": "dnsPolicy",
       "type": "string"
     },
@@ -2108,11 +2187,16 @@
                 "description": "Name of the DNS option."
               },
               "value": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "Value of the DNS option (optional)."
               }
             },
-            "required": ["name"],
+            "required": [
+              "name"
+            ],
             "additionalProperties": false,
             "description": "A DNS option object."
           },
@@ -2126,7 +2210,10 @@
       "description": "Host aliases for the pod. For more information checkout: https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/#adding-additional-entries-with-hostaliases",
       "items": {
         "type": "object",
-        "required": ["ip", "hostnames"],
+        "required": [
+          "ip",
+          "hostnames"
+        ],
         "properties": {
           "ip": {
             "type": "string",
@@ -2159,7 +2246,10 @@
         },
         "architecture": {
           "default": "standalone",
-          "enum": ["standalone", "replication"],
+          "enum": [
+            "standalone",
+            "replication"
+          ],
           "required": [],
           "title": "architecture",
           "type": "string"
@@ -2334,7 +2424,14 @@
         },
         "sslMode": {
           "default": "disable",
-          "enum": ["disable", "allow", "require", "prefer", "verify-ca", "verify-full"],
+          "enum": [
+            "disable",
+            "allow",
+            "require",
+            "prefer",
+            "verify-ca",
+            "verify-full"
+          ],
           "description": "The SSL mode to use for the database connection.",
           "required": [],
           "title": "sslMode",
@@ -2355,7 +2452,10 @@
       "properties": {
         "architecture": {
           "default": "standalone",
-          "enum": ["standalone", "replication"],
+          "enum": [
+            "standalone",
+            "replication"
+          ],
           "description": "Enable postgresql architecture.",
           "required": [],
           "title": "architecture",
@@ -2567,12 +2667,17 @@
                 "default": "outline",
                 "description": "This is for setting up the bucket name.",
                 "required": [],
-                "title": "name", 
+                "title": "name",
                 "type": "string"
               },
               "policy": {
                 "default": "none",
-                "enum": ["none", "download", "upload", "public"],
+                "enum": [
+                  "none",
+                  "download",
+                  "upload",
+                  "public"
+                ],
                 "description": "This is for setting up the bucket policy.",
                 "required": [],
                 "title": "policy",
@@ -2815,7 +2920,7 @@
                       },
                       "minItems": 1,
                       "required": [],
-                      "title": "actions", 
+                      "title": "actions",
                       "type": "array"
                     },
                     "resources": {
@@ -2934,7 +3039,7 @@
               "accessKey": {
                 "default": "outline",
                 "required": [],
-                "title": "accessKey", 
+                "title": "accessKey",
                 "type": "string"
               },
               "policy": {
@@ -2954,7 +3059,7 @@
             },
             "required": [
               "accessKey",
-              "secretKey", 
+              "secretKey",
               "policy"
             ],
             "type": "object"
@@ -3448,6 +3553,13 @@
       ],
       "title": "integrations",
       "type": "object"
+    },
+    "iframely": {
+      "description": "Iframely subchart configuration.",
+      "required": [],
+      "title": "iframely",
+      "type": "object",
+      "additionalProperties": true
     }
   },
   "required": [

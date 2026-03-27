@@ -8,8 +8,11 @@ dependencies:
 - name: minio
   repository: https://charts.min.io/
   version: 5.4.0
+- name: iframely
+  repository: file://../iframely
+  version: 0.1.0
 - name: replicated
   repository: oci://registry.replicated.com/library
   version: 1.16.0
-digest: sha256:960d8dc9db81f025bc2c03b0c0771779df1849cd917f9290bc12d3e3475bca53
-generated: "2026-03-04T14:06:52.865043-06:00"
+digest: sha256:6aaa277d974fc772a3e428f5463c611df1a5e53d0571a4259fa21fe0f6a0252e
+generated: "2026-03-26T22:09:41.256808-04:00"

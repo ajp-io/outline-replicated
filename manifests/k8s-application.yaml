@@ -1,0 +1,11 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: outline-enterprise
+spec:
+  descriptor:
+    links:
+      - description: Open Outline
+        url: '{{repl ConfigOption "app_url"}}'
+      - description: Documentation
+        url: "https://docs.getoutline.com/s/guide/"
