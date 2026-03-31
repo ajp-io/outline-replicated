@@ -8,7 +8,7 @@
 | Replicated SDK included as a subchart and running | 1 | `kubectl get pods -n <namespace>` shows the SDK pod in Running state; show your `Chart.yaml` confirming the SDK is declared as a subchart dependency | |
 | SDK renamed for branding | 1 | `kubectl get deployment outline-sdk -n <namespace>` succeeds | The deployment must be named `outline-sdk` |
 | All container images proxied through `proxy.replicated.com` | 2 | Run `kubectl get pods -A -o jsonpath='{range .items[*]}{range .spec.containers[*]}{.image}{"\n"}{end}{range .spec.initContainers[*]}{.image}{"\n"}{end}{end}' \| sort -u` and show every app image starts with `proxy.replicated.com` | |
-| 3+ preflight checks covering distinct deployment concerns with clear, actionable pass/warn/fail messages | 4 | Show preflights running twice: once with a condition that causes a check to fail (e.g. password too short, invalid external DB credentials), then again with all checks passing. Failure messages must explain what went wrong and how to fix it. | Prefer checks that validate real deployment concerns — e.g. database connectivity, password strength, external service reachability. Trivial checks like minimum node count or CPU/memory will not receive full credit. |
+| 3+ preflight checks covering distinct deployment concerns with clear, actionable pass/warn/fail messages | 4 | Show preflights running twice: once with a condition that causes a check to fail (e.g. password too short, invalid external DB credentials), then again with all checks passing. Failure messages must explain what went wrong and how to fix it. | Prefer checks that validate more complex deployment concerns like database connectivity to trivial checks like CPU/memory. |
 
 **Tier 0 total: 10 pts**
 
@@ -19,8 +19,8 @@
 | Task | Pts | Acceptance Criteria | Notes |
 |------|-----|---------------------|-------|
 | Outline installs on a bare VM using embedded cluster and is accessible | 3 | Starting from a fresh VM, complete the embedded cluster install. Show `sudo k0s kubectl get pods -A` with all pods Running, then open Outline in a browser. | |
-| In-place upgrade without data loss | 3 | Install release 1. Create a document in Outline. Trigger the upgrade to release 2 via the Admin Console. Show the document still present and all pods Running after upgrade. | If your DB password changes on upgrade, the database pod won't be able to connect and will fail to start. All pods Running after upgrade confirms the password persisted correctly. |
-| Air-gapped install | 3 | Build an air gap bundle from your release. Transfer it to a VM. Complete the install using only the bundle — including the embedded dependencies (cert-manager, ingress-nginx). Show all pods Running with `sudo k0s kubectl get pods -A` and open Outline's login page in a browser. | Online network access during the demo is fine — the test is that the install uses only the bundle. To fully simulate air gap, remove the VM's external IP after transferring the bundle, then install. |
+| In-place upgrade without data loss | 3 | Install release 1. Create a document in Outline. Trigger the upgrade to release 2 via the Admin Console. Show the document still present and all pods Running after upgrade. | |
+| Air-gapped install | 3 | Build an air gap bundle from your release. Transfer it to a VM. Complete the install using only the bundle — including the embedded dependencies (cert-manager, ingress-nginx). Show all pods Running with `sudo k0s kubectl get pods -A` and open Outline's login page in a browser. | Online network access during the demo is fine because authenticating in Outline is hard without online access. Ensure all necessary images are included in the air gap bundle. |
 | Config screen has at least 3 meaningful capabilities wired through to Helm | — | *Required threshold — no points on its own. Points come from the tables below.* | |
 
 ### Dependencies
