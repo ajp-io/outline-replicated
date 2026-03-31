@@ -20,6 +20,7 @@
 |------|-----|---------------------|-------|
 | Outline installs on a bare VM using embedded cluster and is accessible | 3 | Starting from a fresh VM, complete the embedded cluster install. Show `sudo k0s kubectl get pods -A` with all pods Running, then open Outline in a browser. | |
 | In-place upgrade without data loss | 3 | Install release 1. Create a document in Outline. Trigger the upgrade to release 2 via the Admin Console. Show the document still present and all pods Running after upgrade. | If your DB password changes on upgrade, the database pod won't be able to connect and will fail to start. All pods Running after upgrade confirms the password persisted correctly. |
+| Air-gapped install | 3 | Build an air gap bundle from your release. Transfer it to a VM. Complete the install using only the bundle. Show all pods Running with `sudo k0s kubectl get pods -A` and open Outline's login page in a browser. | Online network access during the demo is fine — the test is that the install uses only the bundle. To fully simulate air gap, remove the VM's external IP after transferring the bundle, then install. |
 | Config screen has at least 3 meaningful capabilities wired through to Helm | — | *Required threshold — no points on its own. Points come from the tables below.* | |
 
 ### Dependencies
@@ -55,10 +56,10 @@
 
 | Task | Pts | Acceptance Criteria | Notes |
 |------|-----|---------------------|-------|
-| Generated default value | 1 | Leave the embedded DB password blank in the config screen and show Outline installs and runs successfully — the password was auto-generated. Then perform an upgrade (as in the task above) and show all pods still Running — confirming the password was not regenerated. | A common failure: the generated value changes on upgrade, the DB pod can't connect, and the pod fails to start. |
+| Generated default value | 1 | Leave the embedded DB password blank in the config screen and show Outline installs and runs successfully — the password was auto-generated. Then perform an upgrade and show all pods still Running — confirming the password was not regenerated. | A common failure: the generated value changes on upgrade, so outline fails to connect to the DB on upgrade. |
 | Input validation | 1 | Attempt to proceed with an invalid config value and show the config screen blocking progress with a clear validation message. | |
 
-**Tier 1 total: 6 pts fixed + up to 15 pts from capabilities tables**
+**Tier 1 total: 9 pts fixed + up to 15 pts from capabilities tables**
 
 ---
 
@@ -67,13 +68,12 @@
 | Task | Pts | Acceptance Criteria | Notes |
 |------|-----|---------------------|-------|
 | App icon and name set correctly | 1 | Screenshot of the KOTS Admin Console showing the correct Outline icon and app name. | |
-| Enterprise portal branding & identity | 1 | Screenshot of the Enterprise Portal showing at minimum: custom logo, favicon, title, and primary/secondary colors applied. | Configure via Enterprise Portal > Portal Settings in the Vendor Portal. |
-| Enterprise portal custom email sender | 1 | Show the verified custom sender domain configured (DKIM + Return-Path records set). Trigger an invitation or verification email and show it arriving from your domain, not a Replicated address. | Requires DNS record setup. Custom subject/body templates count toward this if email sender is also configured. |
-| Enterprise portal install instructions | 1 | In the Enterprise Portal, show per-channel pre- or post-install instructions rendered on the Install page. Instructions must be meaningful (e.g. prerequisites, required firewall rules, post-install configuration steps) — not placeholder text. | Configure via Enterprise Portal > Portal Settings. Supports Markdown. |
-| Enterprise portal self-serve sign-up | 1 | Enable self-serve sign-ups in Enterprise Portal > Self Serve Signup. Share the sign-up URL, complete the sign-up flow as a new user, and show the resulting customer record appearing in the Vendor Portal Customers page. | |
-| License entitlement that gates a real product feature | 3 | Show the license field defined in the Vendor Portal. Install with the entitlement disabled — show the feature is unavailable. Update the license to enable it — show the feature becomes available. The feature must be user-visible. | |
-| Air-gapped install | 3 | Build an air gap bundle from your release. Transfer it to a VM. Complete the install using only the bundle. Show all pods Running with `sudo k0s kubectl get pods -A` and open Outline's login page in a browser. | Online network access during the demo is fine — the test is that the install uses only the bundle. To fully simulate air gap, remove the VM's external IP after transferring the bundle, then install. |
+| Enterprise portal branding & identity | 1 | Screenshot of the Enterprise Portal showing at minimum: custom logo, favicon, title, and primary/secondary colors applied. | |
+| Enterprise portal custom email sender | 1 | Trigger an invitation email and show it arriving from your domain, not a Replicated address. | You'll need a domain you own, or you can purchase one and expense it. |
+| Enterprise portal install instructions | 1 | In the Enterprise Portal, show per-channel pre- or post-install instructions rendered on the Install page. Instructions must be meaningful (e.g. prerequisites, required firewall rules, post-install configuration steps) — not placeholder text. | |
+| Enterprise portal self-serve sign-up | 1 | Share the sign-up URL, complete the sign-up flow as a new user, and show the resulting customer record appearing in the Vendor Portal Customers page. | |
+| License entitlement that gates a real product feature | 3 | Show the license field defined in the Vendor Portal. Install with the entitlement disabled — show the feature is unavailable. Update the license to enable it — show the feature becomes available. | |
 | Support bundle with 2+ actionable analyzers | 3 | Run the support bundle and show the analyzer results with at least 2 checks surfacing meaningful pass/warn/fail states. Briefly explain what each analyzer checks and why it matters for debugging Outline. | |
-| Custom domains configured | 2 | Screenshot of all custom domains configured in the Vendor Portal. | You'll need a domain you own or can purchase (expense it). Create the appropriate DNS records pointing to your installation. |
+| Custom domains configured | 2 | Screenshot of all custom domains configured in the Vendor Portal. | You'll need a domain you own, or you can purchase one and expense it. |
 
-**Tier 2 total: 16 pts**
+**Tier 2 total: 13 pts**
