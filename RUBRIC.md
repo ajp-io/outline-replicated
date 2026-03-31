@@ -54,10 +54,11 @@
 
 | Task | Pts | Acceptance Criteria | Notes |
 |------|-----|---------------------|-------|
-| Generated default value | 1 | Leave the embedded DB password blank in the config screen and show Outline installs and runs successfully — the password was auto-generated. | A common failure: the generated value changes on upgrade, the DB pod can't connect, and the pod fails to start. Your upgrades demo (Tier 2) must show all pods still Running after upgrade. |
+| Generated default value | 1 | Leave the embedded DB password blank in the config screen and show Outline installs and runs successfully — the password was auto-generated. | A common failure: the generated value changes on upgrade, the DB pod can't connect, and the pod fails to start. The in-place upgrade task below must show all pods still Running after upgrade. |
 | Input validation | 1 | Attempt to proceed with an invalid config value and show the config screen blocking progress with a clear validation message. | |
+| In-place upgrade without data loss | 3 | Install release 1. Create a document in Outline. Trigger the upgrade to release 2 via the Admin Console. Show the document still present and all pods Running after upgrade. | If your DB password changes on upgrade, the database pod won't be able to connect and will fail to start. All pods Running after upgrade confirms the password persisted correctly. |
 
-**Tier 1 total: 3 pts fixed + up to 15 pts from capabilities tables**
+**Tier 1 total: 3 pts fixed + up to 18 pts from capabilities tables**
 
 ---
 
@@ -72,8 +73,7 @@
 | Enterprise portal self-serve sign-up | 1 | Enable self-serve sign-ups in Enterprise Portal > Self Serve Signup. Share the sign-up URL, complete the sign-up flow as a new user, and show the resulting customer record appearing in the Vendor Portal Customers page. | Optionally configure a terms and conditions URL and default license type/channel. |
 | License entitlement that gates a real product feature | 3 | Show the license field defined in the Vendor Portal. Install with the entitlement disabled — show the feature is unavailable. Update the license to enable it — show the feature becomes available. The feature must be user-visible. | The feature you gate is your choice. |
 | Air-gapped install | 3 | Build an air gap bundle from your release. Transfer it to a VM. Complete the install using only the bundle. Show all pods Running with `sudo k0s kubectl get pods -A` and open Outline's login page in a browser. | Online network access during the demo is fine — the test is that the install uses only the bundle. To fully simulate air gap, remove the VM's external IP after transferring the bundle, then install. |
-| In-place upgrade without data loss | 3 | Install release 1. Create a document in Outline. Trigger the upgrade to release 2 via the Admin Console. Show the document still present and all pods Running after upgrade. | If your DB password changes on upgrade, the database pod won't be able to connect and will fail to start. All pods Running after upgrade confirms the password persisted correctly. |
 | Support bundle with 2+ actionable analyzers | 3 | Run the support bundle and show the analyzer results with at least 2 checks surfacing meaningful pass/warn/fail states. Briefly explain what each analyzer checks and why it matters for debugging Outline. | |
 | Custom domains configured | 2 | Screenshot of all custom domains configured in the Vendor Portal. | You'll need a domain you own or can purchase (expense it). Create the appropriate DNS records pointing to your installation. |
 
-**Tier 2 total: 19 pts**
+**Tier 2 total: 16 pts**
