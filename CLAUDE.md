@@ -111,9 +111,11 @@ g-scp outline-test configvalues-external-db.yaml configvalues.yaml
 
 ### 4. Run the install
 ```bash
-g-ssh outline-test "sudo ./outline-enterprise install --license license.yaml --config-values configvalues.yaml --admin-console-password admin1234"
+g-ssh outline-test "sudo ./outline-enterprise install --license license.yaml --config-values configvalues.yaml --installer-password admin1234 --headless -y"
 ```
-The `--admin-console-password` flag is required — without it the installer prompts interactively and fails over SSH.
+`--installer-password` sets the installer UI password (EC3 renamed `--admin-console-password`).
+`--headless` is required for non-interactive (SSH) installs in EC3.
+`-y` skips the self-signed cert prompt.
 
 ### 5. Clean up
 ```bash
@@ -125,14 +127,14 @@ g-del outline-test
 **Application changed** (manifests, chart templates, values, new release): create a new release, then re-download and reinstall.
 If a previous install exists on the VM, reset it first:
 ```bash
-g-ssh outline-test "sudo ./outline-enterprise reset"
+g-ssh outline-test "sudo ./outline-enterprise reset --force"
 ```
 Then re-download the new binary+license tarball (step 2) and reinstall (step 4). The new binary is required because the release is baked into it.
 
 **Config values only changed** (e.g. `configvalues.yaml`): no new release needed. Just scp the updated file and reinstall:
 ```bash
 g-scp outline-test configvalues.yaml
-g-ssh outline-test "sudo ./outline-enterprise reset"
+g-ssh outline-test "sudo ./outline-enterprise reset --force"
 g-ssh outline-test "sudo ./outline-enterprise install --license license.yaml --config-values configvalues.yaml --admin-console-password admin1234"
 ```
 

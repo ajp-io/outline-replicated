@@ -21,13 +21,6 @@ spec:
       auth:
         password: '{{repl ConfigOption "db_password"}}'
 
-    externalPostgresql:
-      host: '{{repl ConfigOption "db_host"}}'
-      port: repl{{ ConfigOption "db_port" | ParseInt }}
-      database: '{{repl ConfigOption "db_name"}}'
-      username: '{{repl ConfigOption "db_user"}}'
-      password: '{{repl ConfigOption "db_external_password"}}'
-
     redis:
       enabled: true
       auth:
@@ -41,56 +34,26 @@ spec:
     integrations:
       slack:
         enabled: repl{{ ConfigOptionEquals "slack_integration_enabled" "1" }}
-        verificationToken: '{{repl ConfigOption "slack_verification_token"}}'
-        appId: '{{repl ConfigOption "slack_app_id"}}'
         messageActions: repl{{ ConfigOptionEquals "slack_message_actions" "1" }}
       iframely:
         enabled: repl{{ ConfigOptionEquals "iframely_enabled" "1" }}
         url: "http://outline-iframely:8061"
       linear:
         enabled: repl{{ ConfigOptionEquals "linear_enabled" "1" }}
-        clientId: '{{repl ConfigOption "linear_client_id"}}'
-        clientSecret: '{{repl ConfigOption "linear_client_secret"}}'
       sentry:
         enabled: repl{{ ConfigOptionEquals "sentry_enabled" "1" }}
-        dsn: '{{repl ConfigOption "sentry_dsn"}}'
 
     auth:
       slack:
         enabled: repl{{ ConfigOptionEquals "auth_slack_enabled" "1" }}
-        clientId: '{{repl ConfigOption "slack_client_id"}}'
-        clientSecret: '{{repl ConfigOption "slack_client_secret"}}'
       github:
         enabled: repl{{ ConfigOptionEquals "github_enabled" "1" }}
-        appName: '{{repl ConfigOption "github_app_name"}}'
-        appId: '{{repl ConfigOption "github_app_id"}}'
-        clientId: '{{repl ConfigOption "github_client_id"}}'
-        clientSecret: '{{repl ConfigOption "github_client_secret"}}'
-        appPrivateKey: '{{repl ConfigOption "github_app_private_key" | Base64Encode}}'
       auth0:
         enabled: repl{{ ConfigOptionEquals "oidc_provider" "auth0" }}
-        baseUrl: 'https://{{repl ConfigOption "auth0_domain"}}'
-        clientId: '{{repl ConfigOption "auth0_client_id"}}'
-        clientSecret: '{{repl ConfigOption "auth0_client_secret"}}'
       gitlab:
         enabled: repl{{ ConfigOptionEquals "oidc_provider" "gitlab" }}
-        clientId: '{{repl ConfigOption "gitlab_client_id"}}'
-        clientSecret: '{{repl ConfigOption "gitlab_client_secret"}}'
-        baseUrl: '{{repl ConfigOption "gitlab_base_url"}}'
       gitea:
         enabled: repl{{ ConfigOptionEquals "oidc_provider" "gitea" }}
-        clientId: '{{repl ConfigOption "gitea_client_id"}}'
-        clientSecret: '{{repl ConfigOption "gitea_client_secret"}}'
-        baseUrl: '{{repl ConfigOption "gitea_base_url"}}'
-
-    smtp:
-      host: '{{repl ConfigOption "smtp_host"}}'
-      port: repl{{ ConfigOption "smtp_port" | ParseInt }}
-      username: '{{repl ConfigOption "smtp_username"}}'
-      password: '{{repl ConfigOption "smtp_password"}}'
-      fromEmail: '{{repl ConfigOption "smtp_username"}}'
-      replyEmail: '{{repl ConfigOption "smtp_username"}}'
-      secure: false
 
     certManager:
       createClusterIssuer: 'repl{{ eq Distribution "embedded-cluster" }}'
@@ -115,11 +78,92 @@ spec:
             - '{{repl ConfigOption "app_url" | trimPrefix "https://" | trimPrefix "http://"}}'
 
   optionalValues:
+    - when: '{{repl ConfigOptionEquals "db_external_enabled" "1"}}'
+      recursiveMerge: false
+      values:
+        externalPostgresql:
+          host: '{{repl ConfigOption "db_host"}}'
+          port: repl{{ ConfigOption "db_port" | ParseInt }}
+          database: '{{repl ConfigOption "db_name"}}'
+          username: '{{repl ConfigOption "db_user"}}'
+          password: '{{repl ConfigOption "db_external_password"}}'
+    - when: '{{repl ConfigOptionEquals "auth_magic_link_enabled" "1"}}'
+      recursiveMerge: false
+      values:
+        smtp:
+          host: '{{repl ConfigOption "smtp_host"}}'
+          port: repl{{ ConfigOption "smtp_port" | ParseInt }}
+          username: '{{repl ConfigOption "smtp_username"}}'
+          password: '{{repl ConfigOption "smtp_password"}}'
+          fromEmail: '{{repl ConfigOption "smtp_username"}}'
+          replyEmail: '{{repl ConfigOption "smtp_username"}}'
+          secure: false
+    - when: '{{repl ConfigOptionEquals "slack_integration_enabled" "1"}}'
+      recursiveMerge: false
+      values:
+        integrations:
+          slack:
+            verificationToken: '{{repl ConfigOption "slack_verification_token"}}'
+            appId: '{{repl ConfigOption "slack_app_id"}}'
+    - when: '{{repl ConfigOptionEquals "linear_enabled" "1"}}'
+      recursiveMerge: false
+      values:
+        integrations:
+          linear:
+            clientId: '{{repl ConfigOption "linear_client_id"}}'
+            clientSecret: '{{repl ConfigOption "linear_client_secret"}}'
+    - when: '{{repl ConfigOptionEquals "sentry_enabled" "1"}}'
+      recursiveMerge: false
+      values:
+        integrations:
+          sentry:
+            dsn: '{{repl ConfigOption "sentry_dsn"}}'
     - when: '{{repl ConfigOptionEquals "iframely_enabled" "1"}}'
       recursiveMerge: false
       values:
         extraEnvVars:
           ALLOWED_PRIVATE_IP_ADDRESSES: "0.0.0.0/0"
+    - when: '{{repl ConfigOptionEquals "auth_slack_enabled" "1"}}'
+      recursiveMerge: false
+      values:
+        auth:
+          slack:
+            clientId: '{{repl ConfigOption "slack_client_id"}}'
+            clientSecret: '{{repl ConfigOption "slack_client_secret"}}'
+    - when: '{{repl ConfigOptionEquals "github_enabled" "1"}}'
+      recursiveMerge: false
+      values:
+        auth:
+          github:
+            appName: '{{repl ConfigOption "github_app_name"}}'
+            appId: '{{repl ConfigOption "github_app_id"}}'
+            clientId: '{{repl ConfigOption "github_client_id"}}'
+            clientSecret: '{{repl ConfigOption "github_client_secret"}}'
+            appPrivateKey: '{{repl ConfigOption "github_app_private_key" | Base64Encode}}'
+    - when: '{{repl ConfigOptionEquals "oidc_provider" "auth0"}}'
+      recursiveMerge: false
+      values:
+        auth:
+          auth0:
+            baseUrl: 'https://{{repl ConfigOption "auth0_domain"}}'
+            clientId: '{{repl ConfigOption "auth0_client_id"}}'
+            clientSecret: '{{repl ConfigOption "auth0_client_secret"}}'
+    - when: '{{repl ConfigOptionEquals "oidc_provider" "gitlab"}}'
+      recursiveMerge: false
+      values:
+        auth:
+          gitlab:
+            clientId: '{{repl ConfigOption "gitlab_client_id"}}'
+            clientSecret: '{{repl ConfigOption "gitlab_client_secret"}}'
+            baseUrl: '{{repl ConfigOption "gitlab_base_url"}}'
+    - when: '{{repl ConfigOptionEquals "oidc_provider" "gitea"}}'
+      recursiveMerge: false
+      values:
+        auth:
+          gitea:
+            clientId: '{{repl ConfigOption "gitea_client_id"}}'
+            clientSecret: '{{repl ConfigOption "gitea_client_secret"}}'
+            baseUrl: '{{repl ConfigOption "gitea_base_url"}}'
 
   builder:
     iframely:

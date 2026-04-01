@@ -95,6 +95,10 @@ spec:
           required: true
           value: 'repl{{ RandomString 16 }}'
           when: '{{repl ConfigOptionEquals "db_external_enabled" "0"}}'
+          validation:
+            regex:
+              pattern: ".{8,}"
+              message: "Password must be at least 8 characters."
 
     - name: redis
       title: Redis

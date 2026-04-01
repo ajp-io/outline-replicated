@@ -5,7 +5,7 @@
 | # | Task | Pts | Acceptance Criteria | Notes |
 |---|------|-----|---------------------|-------|
 | 0.1 | Outline installs via `helm install` and is accessible | 2 | `kubectl get pods -n <namespace>` shows all pods Running; open Outline in a browser | |
-| 0.2 | Replicated SDK included as a subchart and running | 1 | `kubectl get pods -n <namespace>` shows the SDK pod in Running state; show your `Chart.yaml` confirming the SDK is declared as a subchart dependency | |
+| 0.2 | Replicated SDK included as a subchart and running | 1 | `kubectl get pods -n <namespace>` shows the SDK pod in Running state; show your `Chart.yaml` confirming the SDK is declared as a dependency | |
 | 0.3 | SDK renamed for branding | 1 | `kubectl get deployment outline-sdk -n <namespace>` succeeds | The deployment must be named `outline-sdk` |
 | 0.4 | All container images proxied through `proxy.replicated.com` | 2 | Run `kubectl get pods -A -o jsonpath='{range .items[*]}{range .spec.containers[*]}{.image}{"\n"}{end}{range .spec.initContainers[*]}{.image}{"\n"}{end}{end}' \| sort -u` and show every app image starts with `proxy.replicated.com` | |
 | 0.5 | 3+ preflight checks covering distinct deployment concerns with clear, actionable pass/warn/fail messages | 4 | Show preflights running twice: once with a condition that causes a check to fail (e.g. password too short, invalid external DB credentials), then again with all checks passing. Failure messages must explain what went wrong and how to fix it. | Prefer checks that validate more complex deployment concerns like database connectivity to trivial checks like CPU/memory. |

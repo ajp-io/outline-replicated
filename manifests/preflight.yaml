@@ -1,0 +1,27 @@
+apiVersion: troubleshoot.sh/v1beta3
+kind: Preflight
+metadata:
+  name: outline-preflight
+spec:
+  collectors:
+    - postgres:
+        collectorName: outline-external-db
+        uri: 'postgresql://{{ .Values.externalPostgresql.username }}:{{ .Values.externalPostgresql.password }}@{{ .Values.externalPostgresql.host }}:{{ .Values.externalPostgresql.port }}/{{ .Values.externalPostgresql.database }}'
+        exclude: "{{ .Values.postgresql.enabled }}"
+
+  analyzers:
+    - postgres:
+        checkName: External PostgreSQL connectivity
+        collectorName: outline-external-db
+        exclude: "{{ .Values.postgresql.enabled }}"
+        docString: |
+          Verifies that Outline can reach and authenticate to the external PostgreSQL database
+          before installation proceeds. Catches wrong credentials, unreachable hosts, and
+          firewall issues early rather than leaving the app pod crash-looping after deploy.
+        outcomes:
+          - fail:
+              when: "connected == false"
+              message: "Could not connect to PostgreSQL at {{ .Values.externalPostgresql.host }}:{{ .Values.externalPostgresql.port }}. Check that the host, port, username, password, and database name are all correct."
+          - pass:
+              when: "connected == true"
+              message: "Successfully connected to external PostgreSQL."

@@ -80,12 +80,12 @@ spec:
     db_external_enabled:
       value: "1"
     db_host:
-      value: "10.128.0.87"
+      value: "10.128.0.39"
     db_port:
       value: "5432"
     db_name:
       value: "outline"
     db_user:
       value: "outline"
-    db_password:
+    db_external_password:
       valuePlaintext: "outlinepass"
